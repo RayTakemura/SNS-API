@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const { schema } = require('../../../../canvas work/18/pizza-hunt/models/Pizza');
 
 const UserSchema = new Schema(
     {
@@ -12,14 +11,34 @@ const UserSchema = new Schema(
         email: {
             type: String,
             require: 'Email address is required',
-            match: /^[a-z._-]+@[a-z._-]+\.(com|net|edu|org)$/,
+            match: /^[a-z0-9._-]+@[a-z._-]+\.[a-z]{2,6}$/,
             unique: true
         },
-        friends: [UserSchema]
-        //thoughts
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ],
+        thoughts: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Thought'
+            }
+        ]
         
+    },
+    {
+        toJSON: {
+            virtuals: true
+        },
+        id: false
     }
 );
+
+UserSchema.virtual('friendCount').get(function() {
+    return this.friends.length;
+});
 
 const User = model('User', UserSchema);
 
